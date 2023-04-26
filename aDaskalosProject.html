@@ -1,0 +1,828 @@
+<HTML>
+<STYLE TYPE="TEXT/CSS">
+TABLE.UML {
+	BORDER-WIDTH: 1PX 1PX 1PX 1PX;
+	BORDER-SPACING: 0PX;
+	BORDER-STYLE: SOLID SOLID SOLID SOLID;
+	BORDER-COLOR: BLACK BLACK BLACK BLACK;
+	BORDER-COLLAPSE: SEPARATE;
+	BACKGROUND-COLOR: WHITE;
+}
+
+CODE {
+	FONT-FAMILY: ARIAL;
+	FONT-SIZE: 80%;
+}
+
+PRE {
+	FONT-FAMILY: ARIAL;
+	FONT-SIZE: 80%;
+}
+
+H1 {
+	FONT-FAMILY: ARIAL;
+	FONT-SIZE: 144%;
+	FONT-STYLE: BOLD;
+}
+
+H2 {
+	FONT-FAMILY: ARIAL;
+	FONT-SIZE: 120%;
+	FONT-STYLE: BOLD;
+}
+
+H3 {
+	FONT-FAMILY: ARIAL;
+	FONT-SIZE: 100%;
+	FONT-STYLE: BOLD;
+}
+
+</STYLE>
+<HEAD>
+<TITLE>
+Elektroenergetick&#253; syst&#233;m</TITLE>
+</HEAD>
+<BODY>
+<H1>Elektroenergetick&#253; syst&#233;m</H1>
+<B>author&#40;s&#41;: </B>Yergazy Karibay
+<BR>
+<P>
+Popis celeho energetickeho systemu 
+</P>
+
+<BR>
+<HR>
+<H2>Workspace</H2>
+<PRE>
+//Vybera Spotrebiteli ktere ma napeti 220&#44; tridu 1 a aktualniZamestnanec ma sluzbu &#39;Mont&#225;&#382;&#39;.
+
+&#40;SpotrebiteliSet select: [:s | &#40;s napeti = 220&#41; &amp; &#40;s tridy = 1 and: [s aktualniZamestnanci includes: &#39;Mont&#225;&#382;&#39;]&#41;]&#41;
+
+
+//
+akualniPorucha := NapajeciLinkaSet do: [:n | n poruchy do:[:c | ^c  asOrderedCollection first]]
+NapajeciLinkaSet do: [:n | n poruchy = Zkrat ifTrue:[^n napeti]] </PRE>
+<H4>Workspace Objects</H4>
+<UL>
+
+<BR>
+<LI>
+<CODE>
+EletrarnaSet :Set
+</CODE>
+<LI>
+<CODE>
+NapajeciLinkaSet :Set
+</CODE>
+<LI>
+<CODE>
+PoruchySet :Set
+</CODE>
+<LI>
+<CODE>
+SluzbySet :Set
+</CODE>
+<LI>
+<CODE>
+SpotrebiteliSet :Set
+</CODE>
+<LI>
+<CODE>
+ZamestnanciSet :Set
+</CODE>
+<LI>
+<CODE>
+akualniPorucha :UndefinedObject
+</CODE>
+</UL>
+
+<BR>
+<HR>
+<H2>Script</H2>
+<PRE>sp1 := Spotrebiteli new.
+sp1 tridy: 1.
+sp1 kapacita: 35000.
+sp1 napeti: 220.
+
+sp2 := Spotrebiteli new.
+sp2 tridy: 2.
+sp2 kapacita: 100000.
+sp2 napeti: 380.
+
+sp3 := Spotrebiteli new.
+sp3 tridy: 3.
+sp3 kapacita: 320000.
+sp3 napeti: 220.
+
+SpotrebiteliSet := Set new.
+SpotrebiteliSet add: sp1; add: sp2; add: sp3.
+
+tE1 := Elektrarna new.
+tE1 typElektrarny: &#39;Atomova elektrarna&#39;.
+tE1 spotrebiteliKapacita add: sp1 kapacita; add: sp2 kapacita; add: sp3 kapacita.
+tE1 maxVykon: 706000.
+
+tE2 := Elektrarna new.
+tE2 typElektrarny: &#39;Plynova elektrarna&#39;.
+tE2 spotrebiteliKapacita add: sp1 kapacita; add: sp2 kapacita; add: sp3 kapacita.
+tE2 maxVykon: 550000.
+
+tE3 := Elektrarna new.
+tE3 typElektrarny: &#39;Vetrna elektrarna&#39;.
+tE3 spotrebiteliKapacita add: sp1 kapacita; add: sp2 kapacita; add: sp3 kapacita.
+tE3 maxVykon: 490000.
+
+EletrarnaSet := Set new.
+EletrarnaSet add: tE1; add: tE2; add: tE3.
+
+nL1 := NapajeciLinka new.
+nL1 typ: &#39;Hlin&#237;k&#39;.
+nL1 delka: 35.
+nL1 odpor: 0.12.
+nL1 kapacita: sp1 kapacita.
+
+nL2 := NapajeciLinka new.
+nL2 typ: &#39;Med&#39;.
+nL2 delka: 54.
+nL2 odpor: 0.55.
+nL2 kapacita: sp2 kapacita.
+
+nL3 := NapajeciLinka new.
+nL3 typ: &#39;Hlin&#237;k&#39;.
+nL3 delka: 23.
+nL3 odpor: 0.12.
+nL3 kapacita: sp3 kapacita.
+
+NapajeciLinkaSet := Set new.
+NapajeciLinkaSet add: nL1; add: nL2; add: nL3.
+
+s1 := Sluzby new.
+s1 nazev: &#39;Mont&#225;&#382;&#39;.
+
+s2 := Sluzby new.
+s2 nazev: &#39;Oprava&#39;.
+
+s3 := Sluzby new.
+s3 nazev: &#39;V&#253;m&#283;na&#39;.
+
+s4 := Sluzby new.
+s4 nazev: &#39;Diagnostika&#39;.
+
+SluzbySet := Set new.
+SluzbySet add: s1; add: s2; add: s3; add: s4.
+
+z1 := Zamestnanci new.
+z1 jmeno: &#39;Kate&#345;ina&#39;.
+z1 prijmeni: &#39;Nov&#225;kov&#225;&#39;.
+z1 pozice: &#39;Elektrik&#225;&#345;ka&#39;.
+z1 sluzby add: s1 nazev; add: s2 nazev; add: s3 nazev. 
+z1 tridy: 1.
+
+z2 := Zamestnanci new.
+z2 jmeno: &#39;Martin&#39;.
+z2 prijmeni: &#39;Vesel&#253;&#39;.
+z2 pozice: &#39;Elektrotechnik&#39;.
+z2 sluzby add: s1 nazev; add: s4 nazev.
+z2 tridy: 2.
+
+z3 := Zamestnanci new.
+z3 jmeno: &#39;Lucie&#39;.
+z3 prijmeni: &#39;Kov&#225;rov&#225;&#39;.
+z3 pozice: &#39;Operativni pracovnice&#39;.
+z3 sluzby add: s2 nazev; add: s3 nazev.
+z3 tridy: 3.
+
+z4 := Zamestnanci new.
+z4 jmeno: &#39;Jan&#39;.
+z4 prijmeni: &#39;Svoboda&#39;.
+z4 pozice: &#39;Elektrik&#225;&#345;&#39;.
+z4 sluzby add: s2 nazev; add: s3 nazev. 
+z4 tridy: 1.
+
+ZamestnanciSet := Set new.
+ZamestnanciSet add: z1; add: z2; add: z3; add: z4.
+
+sp1 zamestnanci add: z1; add: z2; add: z3; add: z4.
+sp2 zamestnanci add: z1; add: z2; add: z3; add: z4.
+sp3 zamestnanci add: z1; add: z2; add: z3; add: z4.
+
+SpotrebiteliSet add: sp1; add: sp2; add: sp3.
+
+nL1 zamestnanci add: z1; add: z2; add: z3; add: z4.
+nL2 zamestnanci add: z1; add: z2; add: z3; add: z4.
+nL3 zamestnanci add: z1; add: z2; add: z3; add: z4.
+
+NapajeciLinkaSet add: nL1; add: nL2; add: nL3.
+
+
+p1 := Poruchy new.
+p1 nazev: &#39;Zkrat&#39;.
+p2 := Poruchy new.
+p2 nazev: &#39;Pret&#237;&#382;en&#237;&#39;.
+p3 := Poruchy new.
+p3 nazev: &#39;Odpojen&#237;&#39;.
+p4 := Poruchy new.
+p4 nazev: &#39;Uzemnen&#237;&#39;.
+
+PoruchySet := Set new.
+PoruchySet add: p1; add: p2; add: p3; add: p4.
+
+nL1 poruchy add: p1 nazev; add: p3 nazev; add: p4 nazev.
+nL2 poruchy add: p1 nazev; add: p3 nazev; add: p4 nazev.
+nL3 poruchy add: p1 nazev; add: p3 nazev; add: p4 nazev.
+
+NapajeciLinkaSet add: nL1; add: nL2; add: nL3.
+
+sp1 poruchy add: p1  nazev; add: p2 nazev; add: p3 nazev.
+sp2 poruchy add: p1  nazev; add: p2 nazev; add: p3 nazev.
+sp3 poruchy add: p1  nazev; add: p2 nazev; add: p3 nazev.
+
+SpotrebiteliSet add: sp1; add: sp2; add: sp3.
+
+tE1 poruchy add: p2 nazev; add: p3 nazev.
+tE2 poruchy add: p2 nazev; add: p3 nazev.
+tE3 poruchy add: p2 nazev; add: p3 nazev.
+
+EletrarnaSet add: tE1; add: tE2; add: tE3.</PRE>
+<HR>
+<H2>Diagram</H2>
+<IMG SRC="aDaskalosProject.gif">
+<HR>
+<H2>Classes</H2>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH=100%>
+<TR>
+<TD WIDTH=20%>
+<TABLE WIDTH=95% BORDER="1" CELLSPACING="0" BORDERCOLOR=BLACK>
+<TR><TD><BIG>
+<B><CODE>
+Zamestnanci
+</CODE></B>
+</BIG></TD></TR>
+<TR><TD>
+<I><SMALL>instance variables</SMALL></I><BR>
+<CODE>
+jmeno :String
+</CODE>
+<BR>
+<CODE>
+pozice :String
+</CODE>
+<BR>
+<CODE>
+prijmeni :String
+</CODE>
+<BR>
+<CODE>
+sluzby :Set
+</CODE>
+<BR>
+<CODE>
+tridy :Number
+</CODE>
+<BR>
+</TD></TR>
+<TR><TD>
+<I><SMALL>methods</SMALL></I><BR>
+<CODE>
+initialize
+</CODE>
+<BR>
+<CODE>
+jmeno
+</CODE>
+<BR>
+<CODE>
+jmeno:
+</CODE>
+<BR>
+<CODE>
+pozice
+</CODE>
+<BR>
+<CODE>
+pozice:
+</CODE>
+<BR>
+<CODE>
+prijmeni
+</CODE>
+<BR>
+<CODE>
+prijmeni:
+</CODE>
+<BR>
+<CODE>
+sluzby
+</CODE>
+<BR>
+<CODE>
+tridy
+</CODE>
+<BR>
+<CODE>
+tridy:
+</CODE>
+<BR>
+</TD></TR>
+</TABLE>
+</TD>
+<TD VALIGN="TOP">
+<P>
+
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4>code of non-accessing methods: </H4>
+<UL>
+<LI>
+<B><CODE>
+initialize
+</CODE></B>
+<PRE>
+&quot;generated by Daskalos&quot;
+
+     super initialize.
+     jmeno := nil.
+     prijmeni := nil.
+     pozice := nil.
+     tridy := nil.
+     sluzby := Set new.</PRE>
+</UL>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH=100%>
+<TR>
+<TD WIDTH=20%>
+<TABLE WIDTH=95% BORDER="1" CELLSPACING="0" BORDERCOLOR=BLACK>
+<TR><TD><BIG>
+<B><CODE>
+Sluzby
+</CODE></B>
+</BIG></TD></TR>
+<TR><TD>
+<I><SMALL>instance variables</SMALL></I><BR>
+<CODE>
+nazev :String
+</CODE>
+<BR>
+</TD></TR>
+<TR><TD>
+<I><SMALL>methods</SMALL></I><BR>
+<CODE>
+initialize
+</CODE>
+<BR>
+<CODE>
+nazev
+</CODE>
+<BR>
+<CODE>
+nazev:
+</CODE>
+<BR>
+</TD></TR>
+</TABLE>
+</TD>
+<TD VALIGN="TOP">
+<P>
+
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4>code of non-accessing methods: </H4>
+<UL>
+<LI>
+<B><CODE>
+initialize
+</CODE></B>
+<PRE>
+&quot;generated by Daskalos&quot;
+
+     super initialize.
+     nazev := nil.</PRE>
+</UL>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH=100%>
+<TR>
+<TD WIDTH=20%>
+<TABLE WIDTH=95% BORDER="1" CELLSPACING="0" BORDERCOLOR=BLACK>
+<TR><TD><BIG>
+<B><CODE>
+Poruchy
+</CODE></B>
+</BIG></TD></TR>
+<TR><TD>
+<I><SMALL>instance variables</SMALL></I><BR>
+<CODE>
+nazev :String
+</CODE>
+<BR>
+</TD></TR>
+<TR><TD>
+<I><SMALL>methods</SMALL></I><BR>
+<CODE>
+initialize
+</CODE>
+<BR>
+<CODE>
+nazev
+</CODE>
+<BR>
+<CODE>
+nazev:
+</CODE>
+<BR>
+</TD></TR>
+</TABLE>
+</TD>
+<TD VALIGN="TOP">
+<P>
+
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4>code of non-accessing methods: </H4>
+<UL>
+<LI>
+<B><CODE>
+initialize
+</CODE></B>
+<PRE>
+&quot;generated by Daskalos&quot;
+
+     super initialize.
+     nazev := nil.</PRE>
+</UL>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH=100%>
+<TR>
+<TD WIDTH=20%>
+<TABLE WIDTH=95% BORDER="1" CELLSPACING="0" BORDERCOLOR=BLACK>
+<TR><TD><BIG>
+<B><CODE>
+NapajeciLinka
+</CODE></B>
+</BIG></TD></TR>
+<TR><TD>
+<I><SMALL>instance variables</SMALL></I><BR>
+<CODE>
+delka :Number
+</CODE>
+<BR>
+<CODE>
+kapacita :Number
+</CODE>
+<BR>
+<CODE>
+odpor :Number
+</CODE>
+<BR>
+<CODE>
+poruchy :Set
+</CODE>
+<BR>
+<CODE>
+typ :String
+</CODE>
+<BR>
+<CODE>
+zamestnanci :Set
+</CODE>
+<BR>
+</TD></TR>
+<TR><TD>
+<I><SMALL>methods</SMALL></I><BR>
+<CODE>
+aktualniZamestnanci
+</CODE>
+<BR>
+<CODE>
+delka
+</CODE>
+<BR>
+<CODE>
+delka:
+</CODE>
+<BR>
+<CODE>
+initialize
+</CODE>
+<BR>
+<CODE>
+kapacita
+</CODE>
+<BR>
+<CODE>
+kapacita:
+</CODE>
+<BR>
+<CODE>
+napeti
+</CODE>
+<BR>
+<CODE>
+odpor
+</CODE>
+<BR>
+<CODE>
+odpor:
+</CODE>
+<BR>
+<CODE>
+poruchy
+</CODE>
+<BR>
+<CODE>
+typ
+</CODE>
+<BR>
+<CODE>
+typ:
+</CODE>
+<BR>
+<CODE>
+zamestnanci
+</CODE>
+<BR>
+</TD></TR>
+</TABLE>
+</TD>
+<TD VALIGN="TOP">
+<P>
+
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4>code of non-accessing methods: </H4>
+<UL>
+<LI>
+<B><CODE>
+aktualniZamestnanci
+</CODE></B>
+<PRE>
+	| resultSet |
+	resultSet := Set new.
+	zamestnanci do: 
+			[:z | 
+			z tridy &gt; 1 
+				ifTrue: 
+					[resultSet add: &#40;Array 
+								with: z jmeno
+								with: z prijmeni
+								with: z tridy&#41;]].
+	^resultSet</PRE>
+<LI>
+<B><CODE>
+initialize
+</CODE></B>
+<PRE>
+&quot;generated by Daskalos&quot;
+
+     super initialize.
+     typ := nil.
+     delka := nil.
+     kapacita := nil.
+     odpor := nil.
+     zamestnanci := Set new.
+     poruchy := Set new.</PRE>
+<LI>
+<B><CODE>
+napeti
+</CODE></B>
+<PRE>
+	^&#40;delka &#42; kapacita &#42; odpor &#42; 1000 / 0.8&#41; sqrt</PRE>
+</UL>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH=100%>
+<TR>
+<TD WIDTH=20%>
+<TABLE WIDTH=95% BORDER="1" CELLSPACING="0" BORDERCOLOR=BLACK>
+<TR><TD><BIG>
+<B><CODE>
+Spotrebiteli
+</CODE></B>
+</BIG></TD></TR>
+<TR><TD>
+<I><SMALL>instance variables</SMALL></I><BR>
+<CODE>
+kapacita :Number
+</CODE>
+<BR>
+<CODE>
+napeti :Number
+</CODE>
+<BR>
+<CODE>
+poruchy :Set
+</CODE>
+<BR>
+<CODE>
+tridy :Number
+</CODE>
+<BR>
+<CODE>
+zamestnanci :Set
+</CODE>
+<BR>
+</TD></TR>
+<TR><TD>
+<I><SMALL>methods</SMALL></I><BR>
+<CODE>
+aktualniZamestnanci
+</CODE>
+<BR>
+<CODE>
+initialize
+</CODE>
+<BR>
+<CODE>
+kapacita
+</CODE>
+<BR>
+<CODE>
+kapacita:
+</CODE>
+<BR>
+<CODE>
+napeti
+</CODE>
+<BR>
+<CODE>
+napeti:
+</CODE>
+<BR>
+<CODE>
+poruchy
+</CODE>
+<BR>
+<CODE>
+tridy
+</CODE>
+<BR>
+<CODE>
+tridy:
+</CODE>
+<BR>
+<CODE>
+zamestnanci
+</CODE>
+<BR>
+</TD></TR>
+</TABLE>
+</TD>
+<TD VALIGN="TOP">
+<P>
+
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4>code of non-accessing methods: </H4>
+<UL>
+<LI>
+<B><CODE>
+aktualniZamestnanci
+</CODE></B>
+<PRE>
+	| resultSet |
+	resultSet := List new.
+	zamestnanci do: 
+			[:z | 
+			z tridy = tridy 
+				ifTrue: 
+					[resultSet
+						add: z jmeno;
+						add: z prijmeni.
+					z sluzby do: [:s | resultSet add: s]]].
+	^resultSet</PRE>
+<LI>
+<B><CODE>
+initialize
+</CODE></B>
+<PRE>
+&quot;generated by Daskalos&quot;
+
+     super initialize.
+     tridy := nil.
+     kapacita := nil.
+     napeti := nil.
+     zamestnanci := Set new.
+     poruchy := Set new.</PRE>
+</UL>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH=100%>
+<TR>
+<TD WIDTH=20%>
+<TABLE WIDTH=95% BORDER="1" CELLSPACING="0" BORDERCOLOR=BLACK>
+<TR><TD><BIG>
+<B><CODE>
+Elektrarna
+</CODE></B>
+</BIG></TD></TR>
+<TR><TD>
+<I><SMALL>instance variables</SMALL></I><BR>
+<CODE>
+maxVykon :Number
+</CODE>
+<BR>
+<CODE>
+poruchy :Set
+</CODE>
+<BR>
+<CODE>
+spotrebiteliKapacita :Bag
+</CODE>
+<BR>
+<CODE>
+typElektrarny :String
+</CODE>
+<BR>
+</TD></TR>
+<TR><TD>
+<I><SMALL>methods</SMALL></I><BR>
+<CODE>
+aktualniVykon
+</CODE>
+<BR>
+<CODE>
+initialize
+</CODE>
+<BR>
+<CODE>
+maxVykon
+</CODE>
+<BR>
+<CODE>
+maxVykon:
+</CODE>
+<BR>
+<CODE>
+poruchy
+</CODE>
+<BR>
+<CODE>
+spotrebiteliKapacita
+</CODE>
+<BR>
+<CODE>
+typElektrarny
+</CODE>
+<BR>
+<CODE>
+typElektrarny:
+</CODE>
+<BR>
+</TD></TR>
+</TABLE>
+</TD>
+<TD VALIGN="TOP">
+<P>
+
+</P>
+</TD>
+</TR>
+</TABLE>
+<H4>code of non-accessing methods: </H4>
+<UL>
+<LI>
+<B><CODE>
+aktualniVykon
+</CODE></B>
+<PRE>
+	^spotrebiteliKapacita inject: 0 into: [:sum :num | sum &#43; num]</PRE>
+<LI>
+<B><CODE>
+initialize
+</CODE></B>
+<PRE>
+&quot;generated by Daskalos&quot;
+
+     super initialize.
+     typElektrarny := nil.
+     maxVykon := nil.
+     spotrebiteliKapacita := Bag new.
+     poruchy := Set new.</PRE>
+<LI>
+<B><CODE>
+spotrebiteliKapacita
+</CODE></B>
+<PRE>
+	&quot;generated by Daskalos&quot;
+
+	^spotrebiteliKapacita</PRE>
+</UL>
+<HR>
+<H2>Links</H2>
+<A HREF="aDaskalosProject.xml">Data file</A> and 
+<A HREF="aDaskalosProject.st">class source</A>.
+
+<BR>
+
+<BR>
+<CODE>
+Generated by Daskalos - Object Modeling Tutor &#40;C&#41; 2006 V. Merunka
+</CODE>
+
+<BR>
+<CODE>
+April 23&#44; 2023
+</CODE>
+</BODY></HTML>
