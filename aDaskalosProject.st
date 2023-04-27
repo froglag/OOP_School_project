@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <st-source>
-<time-stamp>From VisualWorks® NonCommercial, 7.4.1 of May 30, 2006 on April 23, 2023 at 11:08:15 am</time-stamp>
+<time-stamp>From VisualWorks® NonCommercial, 7.4.1 of May 30, 2006 on April 27, 2023 at 1:01:02 pm</time-stamp>
 
 
 <class>
@@ -313,14 +313,7 @@
 <body package="DaskalosUserClasses" selector="aktualniZamestnanci">aktualniZamestnanci
 	| resultSet |
 	resultSet := Set new.
-	zamestnanci do: 
-			[:z | 
-			z tridy &gt; 1 
-				ifTrue: 
-					[resultSet add: (Array 
-								with: z jmeno
-								with: z prijmeni
-								with: z tridy)]].
+	zamestnanci do: [:z | z tridy &gt; 1 ifTrue: [resultSet add: z]].
 	^resultSet</body>
 
 <body package="DaskalosUserClasses" selector="napeti">napeti
@@ -420,8 +413,7 @@
 <class-id>Spotrebiteli</class-id> <category>other methods</category>
 
 <body package="DaskalosUserClasses" selector="aktualniZamestnanci">aktualniZamestnanci
-	| resultSet |
-	resultSet := List new.
+	"	resultSet := List new.
 	zamestnanci do: 
 			[:z | 
 			z tridy = tridy 
@@ -430,6 +422,11 @@
 						add: z jmeno;
 						add: z prijmeni.
 					z sluzby do: [:s | resultSet add: s]]].
+	^resultSet"
+
+	| resultSet |
+	resultSet := Set new.
+	zamestnanci do: [:z | z tridy = tridy ifTrue: [resultSet add: z]].
 	^resultSet</body>
 </methods>
 
